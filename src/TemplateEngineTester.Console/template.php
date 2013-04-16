@@ -1,5 +1,5 @@
 <html>
-	<body>
-		<?= $model->bla ?>
-	</body>
+  <body>
+    Data from model: <?= $model->bla ?>
+  </body>
 </html>

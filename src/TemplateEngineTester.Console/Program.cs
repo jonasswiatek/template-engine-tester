@@ -9,29 +9,61 @@ using TemplateEngineTester.Core.Engines;
 
 namespace ITU.SMDP2013.TemplateEngineTester.Console
 {
-    class Program
+    internal class Program
     {
-        static IList<ITemplateEngine> engines = new List<ITemplateEngine>();
- 
-
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            //Load up engines
-            engines.Add(new PhpEngine(File.ReadAllText("template.php")));
-            engines.Add(new MustacheEngine(File.ReadAllText("template.mustache")));
+            var files = new Queue<string>(args);
 
-            var model = new {
-                                bla = "gay AS FUCK!"
+            var referenceEngine = EngineFromFileName(files.Dequeue());
+            var engines = files.Select(EngineFromFileName);
+
+            var model = new
+                            {
+                                bla = "Lovely lovely text!"
                             };
 
-            foreach (var engine in engines)
+            var referenceResult = referenceEngine.Execute(model);
+            var results = engines.Select(a => new
+                                                  {
+                                                      Engine = a.GetType().Name,
+                                                      Html = a.Execute(model)
+                                                  });
+
+            System.Console.WriteLine("Output from reference engine: ");
+            System.Console.WriteLine(referenceResult);
+            System.Console.WriteLine("");
+            System.Console.WriteLine("");
+
+            foreach (var result in results)
             {
-                System.Console.WriteLine("Engine result --");
-                System.Console.WriteLine(engine.Execute(model));
-                System.Console.WriteLine("End Engine result --");
+                System.Console.WriteLine("Engine " + result.Engine + " --");
+                System.Console.WriteLine(result.Html);
+                System.Console.WriteLine("");
+                System.Console.WriteLine("");
             }
 
             System.Console.Read();
+        }
+
+        private static ITemplateEngine EngineFromFileName(string fileName)
+        {
+            if (fileName.EndsWith(".mustache"))
+            {
+                return new MustacheEngine(File.ReadAllText(fileName));
+            }
+            else if (fileName.EndsWith(".cshtml"))
+            {
+                return new RazorEngine(File.ReadAllText(fileName));
+            }
+            else if (fileName.EndsWith(".php"))
+            {
+                return new PhpEngine(File.ReadAllText(fileName));
+            }
+            else
+            {
+                throw new ArgumentException("Could not determine template engine for " + fileName, "fileName");
+            }
         }
     }
 }

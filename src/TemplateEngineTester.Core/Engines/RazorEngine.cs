@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RazorEngine;
 
 namespace TemplateEngineTester.Core.Engines
 {
@@ -18,7 +19,7 @@ namespace TemplateEngineTester.Core.Engines
         public string Execute(object model)
         {
             var result = Razor.Parse(_templateBody, model);
-            throw new NotImplementedException();
+            return result;
         }
     }
 }
