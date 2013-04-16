@@ -48,7 +48,14 @@
     <None Include="App.config" />
     <Content Include="main.php">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
+    <None Include="template.mustache">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="template.php">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TemplateEngineTester.Core\TemplateEngineTester.Core.csproj">

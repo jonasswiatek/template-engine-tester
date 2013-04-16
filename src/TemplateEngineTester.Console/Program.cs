@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,18 +11,26 @@ namespace ITU.SMDP2013.TemplateEngineTester.Console
 {
     class Program
     {
+        static IList<ITemplateEngine> engines = new List<ITemplateEngine>();
+ 
+
         static void Main(string[] args)
         {
-            ITemplateEngine phpEngine = new PhpEngine(
-                @"Hej: <?=$model->bla?>"
-                );
+            //Load up engines
+            engines.Add(new PhpEngine(File.ReadAllText("template.php")));
+            engines.Add(new MustacheEngine(File.ReadAllText("template.mustache")));
 
-            var result = phpEngine.Execute(new
-                                               {
-                                                   bla = "gay AS FUCK!"
-                                               });
+            var model = new {
+                                bla = "gay AS FUCK!"
+                            };
 
-            System.Console.Write(result);
+            foreach (var engine in engines)
+            {
+                System.Console.WriteLine("Engine result --");
+                System.Console.WriteLine(engine.Execute(model));
+                System.Console.WriteLine("End Engine result --");
+            }
+
             System.Console.Read();
         }
     }
