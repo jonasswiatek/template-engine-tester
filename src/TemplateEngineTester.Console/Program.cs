@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HtmlAgilityPack;
 using TemplateEngineTester.Core;
 using TemplateEngineTester.Core.Engines;
 
@@ -24,11 +25,23 @@ namespace ITU.SMDP2013.TemplateEngineTester.Console
                             };
 
             var referenceResult = referenceEngine.Execute(model);
-            var results = engines.Select(a => new
-                                                  {
-                                                      Engine = a.GetType().Name,
-                                                      Html = a.Execute(model)
-                                                  });
+            var referenceHtmlTree = new HtmlDocument();
+            referenceHtmlTree.LoadHtml(referenceResult);
+
+            var results = engines.Select(a =>
+                                             {
+                                                 var engine = a.GetType().Name;
+                                                 var html = a.Execute(model);
+                                                 var htmlDom = new HtmlDocument();
+                                                 htmlDom.LoadHtml(html);
+
+                                                 return new
+                                                            {
+                                                                Engine = engine,
+                                                                Html = html,
+                                                                HtmlTree = htmlDom
+                                                            };
+                                             });
 
             System.Console.WriteLine("Output from reference engine: ");
             System.Console.WriteLine(referenceResult);
@@ -40,10 +53,31 @@ namespace ITU.SMDP2013.TemplateEngineTester.Console
                 System.Console.WriteLine("Engine " + result.Engine + " --");
                 System.Console.WriteLine(result.Html);
                 System.Console.WriteLine("");
+                System.Console.WriteLine("Testing dom equality with reference engine's result: " + CompareHtmlDocuments(referenceHtmlTree, result.HtmlTree));
+                System.Console.WriteLine("");
                 System.Console.WriteLine("");
             }
 
             System.Console.Read();
+        }
+
+        private static bool CompareHtmlDocuments(HtmlDocument first, HtmlDocument second)
+        {
+            var firstString = GetHtmlString(first);
+            var secondString = GetHtmlString(second);
+
+            return firstString == secondString;
+        }
+
+        private static string GetHtmlString(HtmlDocument document)
+        {
+            var sb = new StringBuilder();
+            using (var writer = new StringWriter(sb))
+            {
+                document.Save(writer);
+            }
+
+            return sb.ToString();
         }
 
         private static ITemplateEngine EngineFromFileName(string fileName)
