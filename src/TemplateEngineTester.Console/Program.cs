@@ -53,11 +53,12 @@ namespace ITU.SMDP2013.TemplateEngineTester.Console
                 System.Console.WriteLine("Engine " + result.Engine + " --");
                 System.Console.WriteLine(result.Html);
                 System.Console.WriteLine("");
-                System.Console.WriteLine("Testing dom equality with reference engine's result: " + CompareHtmlDocuments(referenceHtmlTree, result.HtmlTree));
+                System.Console.WriteLine("Equivalency test: " + (CompareHtmlDocuments(referenceHtmlTree, result.HtmlTree) ? "Passed" : "Failed"));
                 System.Console.WriteLine("");
                 System.Console.WriteLine("");
             }
 
+            System.Console.WriteLine("PRESS ANY KEY TO TERMINATE");
             System.Console.Read();
         }
 
@@ -71,6 +72,8 @@ namespace ITU.SMDP2013.TemplateEngineTester.Console
 
         private static string GetHtmlString(HtmlDocument document)
         {
+            HtmlDocumentCleaner.VisitNode(document.DocumentNode);
+
             var sb = new StringBuilder();
             using (var writer = new StringWriter(sb))
             {
