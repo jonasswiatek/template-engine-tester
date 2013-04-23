@@ -3,7 +3,7 @@
   $render_desc = json_decode($input);
   
   $template_body = $render_desc -> TemplateBody;
-  $model = $render_desc -> Model;
+  $Model = $render_desc -> Model;
   
   eval("?>" . $template_body . "<?php ");
 ?>

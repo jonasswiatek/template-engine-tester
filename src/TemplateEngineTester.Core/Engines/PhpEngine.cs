@@ -26,8 +26,10 @@ namespace TemplateEngineTester.Core.Engines
                                                   {
                                                       RedirectStandardInput = true,
                                                       RedirectStandardOutput = true,
+                                                      RedirectStandardError = true,
                                                       UseShellExecute = false
                                                   }
+                                                 
                               };
 
             process.Start();
@@ -45,7 +47,9 @@ namespace TemplateEngineTester.Core.Engines
             }
 
             process.WaitForExit();
-            return process.StandardOutput.ReadToEnd();
+            var result = process.StandardOutput.ReadToEnd();
+            var error = process.StandardError.ReadToEnd();
+            return result;
         }
     }
 

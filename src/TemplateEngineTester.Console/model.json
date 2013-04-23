@@ -1,0 +1,16 @@
+﻿{
+  PageTitle: "PAGE TITLE STRING",
+  People: [
+    { 
+		Name: "Jonas",
+		Age: 29
+	},
+    { 
+		Name: "Martin",
+		Age: 30,
+		Child: [{
+			Name: "Rofl", Age: 20
+		}]
+	}
+  ]
+}

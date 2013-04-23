@@ -7,7 +7,17 @@
 	    <li>
 		    <div>Name: {{Name}}</div>
 			<div>Age: {{Age}}</div>
+			<h2>Child</h2>
+			{{#Child}}
+				<div>Child: {{Name}}/{{Age}}</div>
+			{{/Child}}
+			{{^Child}}
+				<div>No child</div>
+			{{/Child}}
 		</li>
+	{{/People}}
+	{{^People}}
+		<div>NO PEOPLE</div>
 	{{/People}}
   </body>
 </html>

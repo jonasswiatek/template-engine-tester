@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
+using Newtonsoft.Json;
 using TemplateEngineTester.Core;
 using TemplateEngineTester.Core.Engines;
 
@@ -12,17 +14,39 @@ namespace ITU.SMDP2013.TemplateEngineTester.Console
 {
     internal class Program
     {
+
+        private static ExpandoObject CreatePerson(string name, int age)
+        {
+            dynamic o = new ExpandoObject();
+            o.Name = name;
+            o.Age = age;
+
+            o.Child = new ExpandoObject();
+            o.Child.Name = "Barn";
+            o.Child.Age = 5;
+
+            return o;
+        }
+
+        private static dynamic GetFromJsonFile(string jsonFile)
+        {
+            var serializer = new JsonSerializer();
+            using (var reader = new JsonTextReader(File.OpenText(jsonFile)))
+            {
+                var obj = serializer.Deserialize<dynamic>(reader);
+
+                return obj;
+            }
+        }
+
         private static void Main(string[] args)
         {
             var files = new Queue<string>(args);
 
+            var model = GetFromJsonFile(files.Dequeue());
+
             var referenceEngine = EngineFromFileName(files.Dequeue());
             var engines = files.Select(EngineFromFileName);
-
-            var model = new
-                            {
-                                bla = "Lovely lovely text!"
-                            };
 
             var referenceResult = referenceEngine.Execute(model);
             var referenceHtmlTree = new HtmlDocument();
