@@ -1,5 +1,13 @@
 ﻿<html>
+  <title>{{PageTitle}}</title>
   <body>
-    Data from model: {{bla}}
+	<h1>People</h1>
+	<ul>
+    {{#People}}
+	    <li>
+		    <div>Name: {{Name}}</div>
+			<div>Age: {{Age}}</div>
+		</li>
+	{{/People}}
   </body>
 </html>
