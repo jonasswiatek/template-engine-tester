@@ -14,20 +14,6 @@ namespace ITU.SMDP2013.TemplateEngineTester.Console
 {
     internal class Program
     {
-
-        private static ExpandoObject CreatePerson(string name, int age)
-        {
-            dynamic o = new ExpandoObject();
-            o.Name = name;
-            o.Age = age;
-
-            o.Child = new ExpandoObject();
-            o.Child.Name = "Barn";
-            o.Child.Age = 5;
-
-            return o;
-        }
-
         private static dynamic GetFromJsonFile(string jsonFile)
         {
             var serializer = new JsonSerializer();
@@ -41,12 +27,25 @@ namespace ITU.SMDP2013.TemplateEngineTester.Console
 
         private static void Main(string[] args)
         {
-            var files = new Queue<string>(args);
+            TestTemplate("templates/template00");
+            TestTemplate("templates/template01");
+            TestTemplate("templates/template02");
+            TestTemplate("templates/template03");
+            TestTemplate("templates/template04");
+            //TestTemplate("templates/template05"); Wrapped functions not supported
+            TestTemplate("templates/template06");
+            TestTemplate("templates/template07"); //Helper must use HasValues in Razor instead of Any() and php must use length and not length()
 
-            var model = GetFromJsonFile(files.Dequeue());
+            System.Console.WriteLine("PRESS ANY KEY TO TERMINATE");
+            System.Console.Read();
+        }
 
-            var referenceEngine = EngineFromFileName(files.Dequeue());
-            var engines = files.Select(EngineFromFileName);
+        private static void TestTemplate(string templateBaseName)
+        {
+            var model = GetFromJsonFile(templateBaseName + ".json");
+
+            var referenceEngine = EngineFromFileName(templateBaseName + ".mustache");
+            var engines = new []{".cshtml", ".php"}.Select(a => EngineFromFileName(templateBaseName + a)).Where(a => a != null);
 
             var referenceResult = referenceEngine.Execute(model);
             var referenceHtmlTree = new HtmlDocument();
@@ -54,36 +53,45 @@ namespace ITU.SMDP2013.TemplateEngineTester.Console
 
             var results = engines.Select(a =>
                                              {
+                                                 var success = true;
+
                                                  var engine = a.GetType().Name;
-                                                 var html = a.Execute(model);
+                                                 var html = string.Empty;
                                                  var htmlDom = new HtmlDocument();
-                                                 htmlDom.LoadHtml(html);
+
+                                                 try
+                                                 {
+                                                     html = a.Execute(model);
+                                                     htmlDom.LoadHtml(html);
+                                                 }
+                                                 catch
+                                                 {
+                                                     success = false;
+                                                 }
 
                                                  return new
                                                             {
+                                                                success,
                                                                 Engine = engine,
                                                                 Html = html,
                                                                 HtmlTree = htmlDom
                                                             };
+
                                              });
 
-            System.Console.WriteLine("Output from reference engine: ");
-            System.Console.WriteLine(referenceResult);
-            System.Console.WriteLine("");
-            System.Console.WriteLine("");
+            System.Console.WriteLine("Template: " + templateBaseName);
 
             foreach (var result in results)
             {
-                System.Console.WriteLine("Engine " + result.Engine + " --");
-                System.Console.WriteLine(result.Html);
-                System.Console.WriteLine("");
-                System.Console.WriteLine("Equivalency test: " + (CompareHtmlDocuments(referenceHtmlTree, result.HtmlTree) ? "Passed" : "Failed"));
-                System.Console.WriteLine("");
-                System.Console.WriteLine("");
+                if (result.success)
+                {
+                    System.Console.WriteLine("\t" + result.Engine + ": " + (CompareHtmlDocuments(referenceHtmlTree, result.HtmlTree) ? "Passed" : "Failed"));
+                }
+                else
+                {
+                    System.Console.WriteLine("\t" + result.Engine + ": FATAL");
+                }
             }
-
-            System.Console.WriteLine("PRESS ANY KEY TO TERMINATE");
-            System.Console.Read();
         }
 
         private static bool CompareHtmlDocuments(HtmlDocument first, HtmlDocument second)
@@ -109,6 +117,11 @@ namespace ITU.SMDP2013.TemplateEngineTester.Console
 
         private static ITemplateEngine EngineFromFileName(string fileName)
         {
+            if (!File.Exists(fileName))
+            {
+                return null;
+            }
+
             if (fileName.EndsWith(".mustache"))
             {
                 return new MustacheEngine(File.ReadAllText(fileName));

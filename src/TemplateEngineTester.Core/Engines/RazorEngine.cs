@@ -18,7 +18,7 @@ namespace TemplateEngineTester.Core.Engines
 
         public string Execute(object model)
         {
-                var result = Razor.Parse(_templateBody, model);
+            var result = Razor.Parse(_templateBody, model);
             return result;
         }
     }

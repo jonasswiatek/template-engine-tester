@@ -1,0 +1,17 @@
+﻿<html>
+	<title>{{PageTitle}}</title>
+	<body>
+		<h1>People</h1>
+		<ul>
+			{{#People}}
+			<li>
+				<div>Name: {{Name}}</div>
+				<div>Age: {{Age}}</div>
+			</li>
+			{{/People}}
+			{{^People}}
+				<li>NO PEOPLE</li>
+			{{/People}}
+		</ul>
+	</body>
+</html>

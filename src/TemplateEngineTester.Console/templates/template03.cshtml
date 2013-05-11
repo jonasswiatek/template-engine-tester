@@ -1,0 +1,6 @@
+@using WebDSL;
+@model dynamic
+Shown.
+@if(Model.nothin != null) { foreach(dynamic item1 in WebDSLExtensions.GetCollection(Model.nothin)) { <text> 
+  Never shown!
+ </text> }}

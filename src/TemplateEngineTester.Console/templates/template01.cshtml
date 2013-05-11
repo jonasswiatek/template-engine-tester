@@ -1,0 +1,7 @@
+@using WebDSL;
+@model dynamic
+Hello @Model.name
+You have just won $@Model.value!
+@if(Model.in_ca != null) { foreach(dynamic item1 in WebDSLExtensions.GetCollection(Model.in_ca)) { <text> 
+Well, $@item1.taxed_value, after taxes.
+ </text> }}

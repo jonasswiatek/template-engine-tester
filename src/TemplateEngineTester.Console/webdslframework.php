@@ -8,7 +8,7 @@
     }
     
     function webdsl_isFalseNullOrEmpty($obj){
-        if (value == null | !value | value.length() == 0) return true;
+        if (value == null | !value | value.length == 0) return true;
         return false;
     }
 ?>
