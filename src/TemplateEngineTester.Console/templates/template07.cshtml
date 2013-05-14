@@ -1,8 +1,8 @@
 @using WebDSL;
 @model dynamic
-@if(Model.repo != null) { foreach(dynamic item1 in WebDSLExtensions.GetCollection(Model.repo)) { <text> 
+@if(Model.repo != null) { foreach(dynamic item1 in WebDSLExtensions.GetCollection(Model, Model.repo)) { <text> 
   <b>@item1.name</b>
  </text> }}
-@if(Model.repo == null || !Model.repo.HasValues) { <text> 
+@if(Model.repo == null || Model.repo.Count == 0) { <text> 
   No repos :(
 </text> }

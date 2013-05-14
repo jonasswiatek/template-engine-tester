@@ -19,7 +19,7 @@ namespace ITU.SMDP2013.TemplateEngineTester.Console
             var serializer = new JsonSerializer();
             using (var reader = new JsonTextReader(File.OpenText(jsonFile)))
             {
-                var obj = serializer.Deserialize<dynamic>(reader);
+                var obj = serializer.Deserialize<ExpandoObject>(reader);
 
                 return obj;
             }

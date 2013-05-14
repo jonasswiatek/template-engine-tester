@@ -5,7 +5,7 @@
   <body>
 	<h1>People</h1>
 	<ul>
-    @if(Model.People != null) { foreach(dynamic item1 in WebDSLExtensions.GetCollection(Model.People)) { <text> 
+    @if(Model.People != null) { foreach(dynamic item1 in WebDSLExtensions.GetCollection(Model, Model.People)) { <text> 
 	    <li>
 		    <div>Name: @item1.Name</div>
 			<div>Age: @item1.Age</div>
